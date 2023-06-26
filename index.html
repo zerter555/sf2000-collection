@@ -66,8 +66,8 @@ SF2000 Collection
         }
 
         .sampleImg{
-            height: 180px;
-            width: 240px;
+            max-height: 180px;
+            max-width: 240px;
         }
 
         .mgn-lft-20{
@@ -149,11 +149,11 @@ SF2000 Collection
             <tbody>
               <tr ng-repeat="boot in filteredBootLogo">
                 <td>{{boot[3]}}</td>
-                <td><img class="sampleImg" style="width: 380px;" src={{boot[0]}}></td>
+                <td><img class="sampleImg" src={{boot[0]}}></td>
                 <td>{{boot[1]}}</td>
                 <td>
                     <div style="position: relative; height: 100%; width: 100%;">
-                        <img class="downloadBtn" src="https://cdn-icons-png.flaticon.com/512/0/532.png" ng-click="downloadLink(boot[2])">
+                        <img class="downloadBtn" style="transform: translate(-50%, 50%);" src="https://cdn-icons-png.flaticon.com/512/0/532.png" ng-click="downloadLink(boot[2])">
                     </div>
                 </td>
                 
