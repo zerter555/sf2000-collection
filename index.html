@@ -213,7 +213,7 @@ SF2000 Collection
         };
       $scope.pagination2 = {
             currentPage: 1,
-            numPerPage: 5,
+            numPerPage: 10,
             maxSize: 5
       };
       $scope.pagination3 = {
@@ -285,7 +285,9 @@ SF2000 Collection
         });
 
     $scope.downloadLink = function(test){
-        location.href= test;
+        window.open(
+        test,'_blank'
+        );
     }
     });
 </script>
