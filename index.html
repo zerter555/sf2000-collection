@@ -19,8 +19,8 @@ SF2000 Collection
         }
         .donateBtn{
             float: right;
-            height: 90px;
-            padding-top: 30px;
+            height: 100px;
+            padding-top: 20px;
             padding-right: 50px;
             cursor: pointer;
         }
@@ -73,9 +73,14 @@ SF2000 Collection
         .mgn-lft-20{
             margin-left: 20px;
         }
+
+        td.DL{
+            height: 175px;
+        }
     </style>
-    <script src="./src/angular.min.js"></script>
     <link rel="stylesheet" href="./src/netdna.bootstrapcdn.com_bootstrap_3.1.1_css_bootstrap.min.css">
+    <link rel="stylesheet" href="./src/cdnjs.cloudflare.com_ajax_libs_font-awesome_4.7.0_css_font-awesome.min.css">
+
 </head>
 <body ng-app="myApp" ng-controller="ctrl">
     <div class="header">
@@ -85,16 +90,17 @@ SF2000 Collection
     <div>
     <div class="mgn-lft-20">
         <h2>SF2000 Theme Collection</h2>
-        <span>Page By: Zerter</span>
+        <span>Page By: @Zerter</span>
     </div>
     <div class="mgn-lft-20 btn-group">
         <button ng-click="collection = 1">Themes</button>
         <button ng-click="collection = 2">Boot Logo</button>
         <button ng-click="collection = 3">BGM</button>
     </div>
-    <span>Notes: please join discord link to view some download links </span><a href="https://discord.gg/retrohandhelds">https://discord.gg/retrohandhelds</a>
+    <div style="margin-left: 25px;">Notes: please join discord link to view some download links <a href="https://discord.gg/retrohandhelds">https://discord.gg/retrohandhelds</a> </div>
+    <div style="margin-left: 25px;">SF2000 Info Page by @vonmillhausen: <a href="https://vonmillhausen.github.io/sf2000/">https://vonmillhausen.github.io/sf2000/</a> </div>
 
-    <div class="container-fluid" ng-if="collection == 1">
+    <div class="container-fluid" ng-hide="collection != 1">
         <h2>THEMES</h2>
           <table class="table table-bordered">
             <thead>
@@ -108,8 +114,8 @@ SF2000 Collection
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="theme in themes | filter : paginate">
-                <td>{{$index + 1}}</td>
+              <tr ng-repeat="theme in filteredThemes">
+                <td>{{theme[5]}}</td>
                 <td>{{theme[0]}}</td>
                 <td><img class="sampleImg" src={{theme[1]}}></td>
                 <td>{{theme[2]}}</td>
@@ -123,9 +129,71 @@ SF2000 Collection
               </tr>
             </tbody>
           </table>
-          <pagination total-items="totalItems" ng-model="currentPage"
-            max-size="5" boundary-links="true"
-            items-per-page="numPerPage" class="pagination-sm">
+          <pagination total-items="totalItems" ng-model="pagination.currentPage"
+            max-size="pagination.maxSize" boundary-links="true"
+            items-per-page="pagination.numPerPage" class="pagination-sm">
+          </pagination>
+      </div>
+
+      <div class="container-fluid" ng-hide="collection != 2">
+        <h2>BOOT LOGO</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Sample</th>
+                <th>Author</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="boot in filteredBootLogo">
+                <td>{{boot[3]}}</td>
+                <td><img class="sampleImg" style="width: 380px;" src={{boot[0]}}></td>
+                <td>{{boot[1]}}</td>
+                <td>
+                    <div style="position: relative; height: 100%; width: 100%;">
+                        <img class="downloadBtn" src="https://cdn-icons-png.flaticon.com/512/0/532.png" ng-click="downloadLink(boot[2])">
+                    </div>
+                </td>
+                
+              </tr>
+            </tbody>
+          </table>
+          <pagination total-items="totalItems2" ng-model="pagination2.currentPage"
+            max-size="pagination2.maxSize" boundary-links="true"
+            items-per-page="pagination2.numPerPage" class="pagination-sm">
+          </pagination>
+      </div>
+
+      <div class="container-fluid" ng-hide="collection != 3">
+        <h2>BGM</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="bgm in filteredBgms">
+                <td>{{bgm[3]}}</td>
+                <td>{{bgm[0]}}</td>
+                <td>{{bgm[1]}}</td>
+                <td class="DL">
+                    <div style="position: relative; height: 100%; width: 100%;">
+                        <img class="downloadBtn" src="https://cdn-icons-png.flaticon.com/512/0/532.png" ng-click="downloadLink(boot[2])">
+                    </div>
+                </td>
+                
+              </tr>
+            </tbody>
+          </table>
+          <pagination total-items="totalItems3" ng-model="pagination3.currentPage"
+            max-size="pagination3.maxSize" boundary-links="true"
+            items-per-page="pagination3.numPerPage" class="pagination-sm">
           </pagination>
       </div>
     </div>
@@ -138,26 +206,83 @@ SF2000 Collection
 
     app.controller('ctrl', function($scope, $http) {
       $scope.collection = 1;
+      $scope.pagination = {
+            currentPage: 1,
+            numPerPage: 5,
+            maxSize: 5
+        };
+      $scope.pagination2 = {
+            currentPage: 1,
+            numPerPage: 5,
+            maxSize: 5
+      };
+      $scope.pagination3 = {
+            currentPage: 1,
+            numPerPage: 5,
+            maxSize: 5
+      };
+
       $http.get("https://sheets.googleapis.com/v4/spreadsheets/1DbFxX6gfZqZ3pOdz4BlZ_QiSrhT3eH6mVpMBJvYpjM8/values/theme/?alt=json&key=AIzaSyBrB6s7WwRnMDOHCWALK1jPS-9tXMLuc7s")
             .success(function(response) {$scope.themes = response.values;
             $scope.themes.splice(0, 1);
+            for(var i = 0; i < $scope.themes.length; i++){
+                $scope.themes[i].push(i+1);
+            }
 
             $scope.totalItems = $scope.themes.length;
-            $scope.currentPage = 1;
-            $scope.numPerPage = 5;
+            $scope.filteredThemes = []
             
-            $scope.paginate = function(value) {
-                var begin, end, index;
-                begin = ($scope.currentPage - 1) * $scope.numPerPage;
-                end = begin + $scope.numPerPage;
-                index = $scope.themes.indexOf(value);
-                return (begin <= index && index < end);
-            };
-            console.log($scope.themes);
-            console.log( $scope.totalItems);
-
-           
+            $scope.$watch('pagination.currentPage + pagination.numPerPage', function() {
+                var begin = (($scope.pagination.currentPage - 1) * $scope.pagination.numPerPage)
+                , end = begin + $scope.pagination.numPerPage;
+                
+                $scope.filteredThemes = $scope.themes.slice(begin, end);
+                console.log($scope.themes);
+                console.log($scope.filteredThemes);
             });
+            });
+            
+        $http.get("https://sheets.googleapis.com/v4/spreadsheets/1DbFxX6gfZqZ3pOdz4BlZ_QiSrhT3eH6mVpMBJvYpjM8/values/boot_logo/?alt=json&key=AIzaSyBrB6s7WwRnMDOHCWALK1jPS-9tXMLuc7s")
+            .success(function(response) {$scope.bootlogo = response.values;
+            $scope.bootlogo.splice(0, 1);
+
+            for(var i = 0; i < $scope.bootlogo.length; i++){
+                $scope.bootlogo[i].push(i+1);
+            }
+
+            $scope.totalItems2 = $scope.bootlogo.length;
+            $scope.filteredBootLogo = []
+            
+            $scope.$watch('pagination2.currentPage + pagination2.numPerPage', function() {
+                var begin = (($scope.pagination2.currentPage - 1) * $scope.pagination2.numPerPage)
+                , end = begin + $scope.pagination2.numPerPage;
+                
+                $scope.filteredBootLogo = $scope.bootlogo.slice(begin, end);
+                console.log($scope.bootlogo);
+                console.log($scope.filteredBootLogo);
+            });
+            });
+
+        $http.get("https://sheets.googleapis.com/v4/spreadsheets/1DbFxX6gfZqZ3pOdz4BlZ_QiSrhT3eH6mVpMBJvYpjM8/values/bgm/?alt=json&key=AIzaSyBrB6s7WwRnMDOHCWALK1jPS-9tXMLuc7s")
+            .success(function(response) {$scope.bgms = response.values;
+            $scope.bgms.splice(0, 1);
+
+            for(var i = 0; i < $scope.bgms.length; i++){
+                $scope.bgms[i].push(i+1);
+            }
+
+            $scope.totalItems3 = $scope.bgms.length;
+            $scope.filteredBgms = []
+            
+            $scope.$watch('pagination3.currentPage + pagination3.numPerPage', function() {
+                var begin = (($scope.pagination3.currentPage - 1) * $scope.pagination3.numPerPage)
+                , end = begin + $scope.pagination3.numPerPage;
+                
+                $scope.filteredBgms = $scope.bgms.slice(begin, end);
+                console.log($scope.bgms);
+                console.log($scope.filteredBgms);
+        });
+        });
 
     $scope.downloadLink = function(test){
         location.href= test;
