@@ -1,0 +1,212 @@
+<html>
+<title>
+SF2000 Main Menu Icon Editor
+</title>
+<head>
+    <style>
+        .donateBtn{
+            height: 90px;
+            padding-top: 20px;
+            padding-right: 50px;
+            cursor: pointer;
+        }
+        .canvasContainer{
+            border-radius: 25px;
+            background: black;
+            margin-right:670px;
+            margin-left: 670px;
+            padding: 33px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+
+        .textAlignCenter{
+            text-align: center;
+        }
+        #ico1Div div,#ico2Div div,#ico3Div div,#ico4Div div{
+            font-weight: bold;
+        }
+        .marginTop-20{
+            margin-top: 20px;
+        }
+        body{
+            background-color: #313539 !important;
+            color: #ffffff !important;
+            font-family: Arial, Helvetica, sans-serif
+        }
+    </style>
+    <script src="./src/code.angularjs.org_1.2.16_angular.js"></script>
+    <script src="./src/jquery.min.js"></script>
+    
+</head>
+<body ng-app="myApp" ng-controller="ctrl">
+        <h2 class="textAlignCenter">Main Menu Icon Editor Tool</h2>
+        <div style="background-color:gray; padding : 10px;">
+       <b>Notes/Links:</b> This tool can be use in tandem with Tadpole and Generic Image Tool.<br/>
+        Tadpole: <a href="https://github.com/EricGoldsteinNz/tadpole">https://github.com/EricGoldsteinNz/tadpole</a> [To change the game label and game shortcut]<br/>
+        Generic Image Tool: <a href="https://vonmillhausen.github.io/sf2000/tools/genericImageTool.html">https://vonmillhausen.github.io/sf2000/tools/genericImageTool.html</a> [convert sf2000 file to image file and vice versa]<br/>
+        SF2000 Info Page: <a href="https://vonmillhausen.github.io/sf2000/">https://vonmillhausen.github.io/sf2000/</a><br/>
+        Theme Collection Page: <a href="https://zerter555.github.io/sf2000-collection/index.html">https://zerter555.github.io/sf2000-collection/index.html</a>
+        </div>
+
+        <div class="textAlignCenter marginTop-20">
+            <b>Background Image</b> <br/>(Accepts JPEG and PNG, If image is larger than 640x480px it will resize the background image)<br \>
+            <label>Select a file:</label>
+            <input type="file" id="backgroundImg" name="backgroundImg" ng-model="backgroundImg" custom-on-change="uploadFile" ng-click="uploadFile = true">
+        </div>
+        <div id="iconContainer" class="textAlignCenter marginTop-20"  style="display: none;">
+            <div>Accepts JPEG and PNG, If image is larger than 124x124px it will resize the icon image</div>
+
+            <div id="ico1Div" class="marginTop-20">
+                <div>Icon 1</div>
+                <label>Select a file:</label>
+                <input type="file" id="ico1"custom-on-change="uploadFile">
+            </div>
+            <div id="ico2Div" style="display: none;" class="marginTop-20">
+                <div>Icon 2</div>
+                <label>Select a file:</label>
+                <input type="file" id="ico2" custom-on-change="uploadFile">
+            </div>
+            <div id="ico3Div" style="display: none;" class="marginTop-20">
+                <div>Icon 3</div>
+                <label>Select a file:</label>
+                <input type="file" id="ico3" ng-model="ico1" custom-on-change="uploadFile">
+            </div>
+            <div id="ico4Div" style="display: none;" class="marginTop-20">
+                <div>Icon 4</div>
+                <label>Select a file:</label>
+                <input type="file" id="ico4" ng-model="ico1" custom-on-change="uploadFile">
+            </div>
+
+            <div class="canvasContainer">
+                <canvas id="canV" width="640" height="480"></canvas>
+            </div>
+            <div>
+                <input type="button" value="DOWNLOAD" onclick="candown('canV', 'png')">
+            </div>   
+        </div>
+        <img class="donateBtn" onclick="location.href='https://www.paypal.com/paypalme/zerter555';" src="https://raw.githubusercontent.com/aha999/DonateButtons/master/Paypal.png">
+
+        
+</body>
+<script type="text/javascript">
+    var app = angular.module('myApp', []);
+
+    app.controller('ctrl', function($scope, $http) {
+        $scope.validBackgroundImage = false;
+        $scope.ico1 = false;
+        $scope.ico2 = false;
+        $scope.ico3 = false;
+        $scope.ico4 = false;
+
+        $scope.uploadFile = function(event){
+            var file = event.target.files[0];
+
+            if(file.type != "image/png" && file.type != "image/jpeg"){
+                $scope.hideShowNextElements(event.target,true);    
+                event.target.value = null;
+            }else{
+                $scope.hideShowNextElements(event.target,false);
+            }
+            
+        };
+
+        $scope.hideShowNextElements = function(file,hide){
+        
+            switch (file.id) {
+            case 'backgroundImg':
+                if(hide){
+                    $("#iconContainer").hide();
+                }else{
+                    $("#iconContainer").show();
+                    $scope.insertToCanvas(file.files[0],'bg', 0, 0);
+                }
+                break;
+            case 'ico1':
+            if(hide){
+                    $("#ico2Div").hide();
+                }else{
+                    $("#ico2Div").show();
+                    $scope.insertToCanvas(file.files[0],'ico',42, 290);
+                }   break;
+            case 'ico2':
+            if(hide){
+                    $("#ico3Div").hide();
+                }else{
+                    $("#ico3Div").show();
+                    $scope.insertToCanvas(file.files[0],'ico',186, 290);
+                }   break;
+            case 'ico3':
+                if(hide){
+                    $("#ico4Div").hide();
+                }else{
+                    $("#ico4Div").show();
+                    $scope.insertToCanvas(file.files[0],'ico',330, 290);
+                }   break;
+            
+            case 'ico4':
+                if(hide){
+                }else{
+                    $scope.insertToCanvas(file.files[0],'ico',474, 290);
+                }   break;
+            
+            }
+        }
+
+        $scope.insertToCanvas = function(file, type, x, y){
+            let canvas = document.getElementById('canV'),
+            context = canvas.getContext('2d');
+            console.log(file);
+
+            switch (type) {
+            case 'bg':
+                base_image = new Image();
+                base_image.src = URL.createObjectURL(file);
+                base_image.onload = function(){
+                    context.drawImage(base_image, x, y, 640, 480);
+                }
+                break;
+            case 'ico':
+            base_image = new Image();
+                base_image.src = URL.createObjectURL(file);
+                base_image.onload = function(){
+                    context.drawImage(base_image, x, y, 124, 124);
+                }
+                break;
+            }
+        }
+    });
+    app.directive('customOnChange', function() {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+            var onChangeHandler = scope.$eval(attrs.customOnChange);
+            element.on('change', onChangeHandler);
+            element.on('$destroy', function() {
+                element.off();
+            });
+
+            }
+        };
+    });
+
+    function candown (target, type) {
+  // (B1) GET CANVAS
+  let canvas = document.getElementById(target);
+ 
+   // (B2) CREATE LINK
+  let anchor = document.createElement("a");
+  anchor.download = "download." + type;
+  anchor.href = canvas.toDataURL("image/" + type);
+ 
+  // (B3) "FORCE DOWNLOAD"
+  anchor.click();
+  anchor.remove();
+ 
+  // (B4) SAFER ALTERNATIVE - LET USER CLICK ON LINK
+  // anchor.innerHTML = "Download";
+  // document.body.appendChild(anchor);
+}
+</script>
+</html>
