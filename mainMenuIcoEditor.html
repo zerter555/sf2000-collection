@@ -94,12 +94,6 @@ SF2000 Main Menu Icon Editor
     var app = angular.module('myApp', []);
 
     app.controller('ctrl', function($scope, $http) {
-        $scope.validBackgroundImage = false;
-        $scope.ico1 = false;
-        $scope.ico2 = false;
-        $scope.ico3 = false;
-        $scope.ico4 = false;
-
         $scope.uploadFile = function(event){
             var file = event.target.files[0];
 
