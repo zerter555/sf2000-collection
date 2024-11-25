@@ -132,7 +132,7 @@ SF2000 Collection
                 <td>{{theme.id}}</td>
                 <td>{{theme.title}}</td>
                 <td><img class="sampleImg" src={{theme.sample}}></td>
-                <td>{{theme.description}}</td>
+                <td ng-bind-html="theme.description"></td>
                 <td>{{theme.author}}</td>
                 <td>
                     <div style="position: relative; height: 100%; width: 100%;">
@@ -214,9 +214,10 @@ SF2000 Collection
 </body>
 <script src="./src/code.angularjs.org_1.2.16_angular.js"></script>
 <script src="./src/code.angularjs.org_1.2.16_angular-resource.js"></script>
+<script src="./src/code.angularjs.org_1.2.16_angular-sanitize.js"></script>
 <script src="./src/ui-bootstrap-tpls-0.11.0.js"></script>
 <script type="text/javascript">
-    var app = angular.module('myApp', ['ui.bootstrap', 'ngResource']);
+    var app = angular.module('myApp', ['ui.bootstrap', 'ngResource', 'ngSanitize']);
 
     app.controller('ctrl', function($scope, $http) {
       $scope.collection = 1;
